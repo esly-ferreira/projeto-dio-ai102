@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentação de Scripts Python - AI 102</title>
+
+  <!-- 
+    Data de geração: 2024-12-19
+    Versão: 1.0
+    Autor: Esly Barbosa
+    -->
+
+  <style>
+    :root {
+      --gray-50: #fafafa;
+      --gray-100: #f5f5f5;
+      --gray-200: #e5e5e5;
+      --gray-300: #d4d4d4;
+      --gray-400: #a3a3a3;
+      --gray-500: #737373;
+      --gray-600: #525252;
+      --gray-700: #404040;
+      --gray-800: #262626;
+      --gray-900: #171717;
+      --blue-50: #eff6ff;
+      --blue-100: #dbeafe;
+      --blue-500: #3b82f6;
+      --blue-600: #2563eb;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--gray-800);
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: 100vh;
+      gap: 0;
+      transition: grid-template-columns 0.3s ease;
+    }
+
+    .container.sidebar-hidden {
+      grid-template-columns: 0 1fr;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 2rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-radius: 16px 16px;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .header p {
+      font-size: 1.125rem;
+      color: var(--gray-600);
+      font-weight: 400;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid var(--gray-200);
+      padding: 2rem 0;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    /* Botão para mostrar sidebar quando oculto */
+    .sidebar-show-btn {
+      position: fixed;
+      top: 2rem;
+      left: 1rem;
+      z-index: 1001;
+      background: linear-gradient(135deg, var(--blue-500) 0%, var(--blue-600) 100%);
+      border: none;
+      border-radius: 50%;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      opacity: 0.9;
+    }
+
+    .sidebar-show-btn:hover {
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .sidebar-show-btn:active {
+      transform: translateY(0);
+    }
+
+    .sidebar-show-btn.visible {
+      display: flex;
+    }
+
+    .sidebar-show-icon {
+      font-size: 1.2rem;
+      color: white;
+      transition: transform 0.3s ease;
+    }
+
+    /* Custom scrollbar for sidebar */
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--gray-300);
+      border-radius: 3px;
+    }
+
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: var(--gray-400);
+    }
+
+    .sidebar h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 2rem;
+      padding: 0 2rem;
+      border-bottom: 1px solid var(--gray-200);
+      padding-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-list {
+      list-style: none;
+    }
+
+    .nav-item {
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-link {
+      display: block;
+      padding: 0.875rem 2rem;
+      color: var(--gray-600);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border-radius: 0 25px 25px 0;
+      margin-right: 1rem;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      background: var(--blue-50);
+      color: var(--blue-600);
+    }
+
+    .nav-link.active {
+      background: var(--blue-100);
+      color: var(--blue-600);
+    }
+
+    .nav-link.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--blue-600);
+      border-radius: 0 2px 2px 0;
+    }
+
+    /* Main Content */
+    .main {
+      padding: 2rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+    }
+
+    .section:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .section h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.025em;
+    }
+
+    .section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+
+    .section p {
+      color: var(--gray-600);
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .code-block {
+      background: var(--gray-900);
+      color: var(--gray-100);
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      position: relative;
+      overflow-x: auto;
+      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--gray-700);
+    }
+
+    .code-title {
+      font-weight: 600;
+      color: var(--gray-300);
+    }
+
+    .copy-btn {
+      background: var(--blue-600);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      background: var(--blue-500);
+      transform: translateY(-1px);
+    }
+
+    .copy-btn.copied {
+      background: var(--gray-500);
+    }
+
+    .code-content {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .step-list {
+      list-style: none;
+      margin: 1rem 0;
+    }
+
+    .step-list li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: var(--gray-600);
+    }
+
+    .step-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--blue-500);
+      font-weight: bold;
+    }
+
+    .command {
+      background: var(--gray-100);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+      font-size: 0.875rem;
+      color: var(--gray-800);
+      border-left: 4px solid var(--blue-500);
+      margin: 1rem 0;
+    }
+
+    .sandbox {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .sandbox h4 {
+      color: var(--gray-800);
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+    }
+
+    .demo-btn {
+      background: var(--blue-600);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .demo-btn:hover {
+      background: var(--blue-500);
+      transform: translateY(-1px);
+    }
+
+    .output {
+      background: var(--gray-900);
+      color: var(--gray-100);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+      font-size: 0.875rem;
+      min-height: 50px;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      background: var(--gray-900);
+      color: var(--gray-300);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .footer p {
+      margin: 0.25rem 0;
+    }
+
+    .github-btn {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--gray-800) 0%, var(--gray-900) 100%);
+      color: white;
+      border: none;
+      padding: 1rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-lg);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--gray-700);
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .github-btn.hidden {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-50%) translateY(20px);
+    }
+
+    .github-btn:hover {
+      transform: translateX(-50%) translateY(-3px);
+      box-shadow: 0 15px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-800) 100%);
+    }
+
+    .github-btn:active {
+      transform: translateX(-50%) translateY(-1px);
+    }
+
+    .github-icon {
+      font-size: 1.1rem;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+      position: relative;
+      z-index: 10;
+      background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+      border: 1px solid var(--gray-300);
+      border-radius: 50%;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      opacity: 0.7;
+    }
+
+    .sidebar-toggle:hover {
+      background: linear-gradient(135deg, var(--blue-100) 0%, var(--blue-200) 100%);
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .sidebar-toggle:active {
+      transform: translateY(0);
+    }
+
+    .sidebar-toggle-icon {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      transition: all 0.3s ease;
+      font-weight: bold;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-toggle:hover .sidebar-toggle-icon {
+      color: var(--blue-600);
+    }
+
+    .sidebar-toggle.rotated .sidebar-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Responsividade do botão flutuante */
+    @media (max-width: 768px) {
+      .github-btn {
+        bottom: 1.5rem;
+        padding: 0.8rem 1.2rem;
+        font-size: 0.85rem;
+      }
+
+      .github-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--gray-600);
+      cursor: pointer;
+      padding: 0.5rem;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .mobile-menu-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 2rem 0;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-menu.open .mobile-menu-content {
+      transform: translateX(0);
+    }
+
+    .mobile-menu-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--gray-600);
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        display: none;
+      }
+
+      .sidebar-toggle {
+        display: none;
+      }
+
+      .sidebar-show-btn {
+        display: none !important;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1001;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 8px;
+        padding: 0.5rem;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .header {
+        padding: 1rem;
+        padding-left: 4rem;
+        margin-bottom: 1rem;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .main {
+        padding: 1rem;
+        max-width: 100%;
+      }
+
+      .section {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+      }
+
+      .section h2 {
+        font-size: 1.5rem;
+      }
+
+      .section:hover {
+        transform: none;
+      }
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Focus styles for accessibility */
+    .nav-link:focus,
+    .copy-btn:focus,
+    .demo-btn:focus {
+      outline: 2px solid var(--blue-500);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar Show Button (quando oculto) -->
+  <button class="sidebar-show-btn" id="sidebarShowBtn" aria-label="Mostrar sidebar">
+    <span class="sidebar-show-icon">☰</span>
+  </button>
+
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Abrir menu">☰</button>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-content">
+      <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Fechar menu">×</button>
+      <h3>Índice</h3>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#visao-geral" class="nav-link">Visão Geral</a></li>
+        <li class="nav-item"><a href="#codigo-a" class="nav-link">Código A</a></li>
+        <li class="nav-item"><a href="#codigo-b" class="nav-link">Código B</a></li>
+        <li class="nav-item"><a href="#exemplos" class="nav-link">Exemplos de Saída</a></li>
+        <li class="nav-item"><a href="#como-rodar" class="nav-link">Como Rodar</a></li>
+        <li class="nav-item"><a href="#api-params" class="nav-link">API/Params</a></li>
+        <li class="nav-item"><a href="#licenca" class="nav-link">Licença</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <h3>
+        Índice
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Ocultar sidebar">
+          <span class="sidebar-toggle-icon">✕</span>
+        </button>
+      </h3>
+      <ul class="nav-list">
+        <li class="nav-item"><a href="#visao-geral" class="nav-link">Visão Geral</a></li>
+        <li class="nav-item"><a href="#codigo-a" class="nav-link">Código A</a></li>
+        <li class="nav-item"><a href="#codigo-b" class="nav-link">Código B</a></li>
+        <li class="nav-item"><a href="#exemplos" class="nav-link">Exemplos de Saída</a></li>
+        <li class="nav-item"><a href="#como-rodar" class="nav-link">Como Rodar</a></li>
+        <li class="nav-item"><a href="#api-params" class="nav-link">API/Params</a></li>
+        <li class="nav-item"><a href="#licenca" class="nav-link">Licença</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Header -->
+      <header class="header">
+        <h1>Documentação de Scripts Python</h1>
+        <p>Tradução de documentos DOCX e páginas web com APIs de tradução</p>
+      </header>
+
+      <!-- Visão Geral -->
+      <section id="visao-geral" class="section">
+        <h2>Visão Geral</h2>
+        <p>Esta documentação apresenta dois scripts Python para tradução de documentos DOCX e páginas web usando APIs de tradução.</p>
+        <p>Os scripts demonstram preservação de formatação e estrutura durante o processo de tradução automática.</p>
+      </section>
+
+      <!-- Código A -->
+      <section id="codigo-a" class="section">
+        <h2>Código A: DOCX Translator</h2>
+
+        <h3>Explicação Passo-a-Passo</h3>
+        <ul class="step-list">
+          <li>Instala as dependências necessárias (python-docx, requests)</li>
+          <li>Configura a PROVIDER_KEY para API de tradução</li>
+          <li>Carrega o arquivo DOCX usando python-docx</li>
+          <li>Itera através de parágrafos, títulos e listas</li>
+          <li>Traduz o texto mantendo formatação (negrito, itálico)</li>
+          <li>Salva o documento traduzido preservando estrutura</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">docx-translator.py</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content"># Instalar dependências no Colab (se precisar usar arquivos Word)
+            !pip install python-docx requests
+
+            import requests
+            from docx import Document
+
+            # Configurações da API Microsoft Translator
+            subscription_key = "SUA_CHAVE_AQUI"
+            endpoint = "https://api.cognitive.microsofttranslator.com"
+            location = "eastus2"
+            target_language = "pt-br"
+
+            def translator_document(text: str, target_language: str = "pt-br") -> str:
+            """
+            Traduz um texto usando a API do Microsoft Translator.
+
+            Args:
+            text (str): Texto a ser traduzido.
+            target_language (str): Idioma de destino (ex: 'pt-br').
+
+            Returns:
+            str: Texto traduzido.
+            """
+            path = "/translate"
+            constructed_url = endpoint + path
+
+            params = {
+            "api-version": "3.0",
+            "from": "en",
+            "to": [target_language]
+            }
+
+            headers = {
+            "Ocp-Apim-Subscription-Key": subscription_key,
+            "Ocp-Apim-Subscription-Region": location,
+            "Content-type": "application/json"
+            }
+
+            body = [{"text": text}]
+            response = requests.post(constructed_url, params=params, headers=headers, json=body)
+            response.raise_for_status()
+
+            result = response.json()
+            return result[0]["translations"][0]["text"]
+
+
+            # Exemplo de uso
+            texto_original = "Hello world, this is a test."
+            traduzido = translator_document(texto_original)
+            print("Original:", texto_original)
+            print("Traduzido:", traduzido)</div>
+        </div>
+
+        <h3>Exemplo de Entrada e Saída</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Exemplo de execução</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content">Entrada:
+            texto_original = "Hello world, this is a test."
+
+            Saída esperada:
+            Original: Hello world, this is a test.
+            Traduzido: Olá mundo, este é um teste.</div>
+        </div>
+
+        <h3>Comando para Executar</h3>
+        <div class="command">python3 docx-translator.py</div>
+      </section>
+
+      <!-- Código B -->
+      <section id="codigo-b" class="section">
+        <h2>Código B: Webpage Translator</h2>
+
+        <h3>Explicação Passo-a-Passo</h3>
+        <ul class="step-list">
+          <li>Instala as dependências necessárias (requests, beautifulsoup4, lxml)</li>
+          <li>Configura a PROVIDER_KEY para API de tradução</li>
+          <li>Faz download da página web via URL</li>
+          <li>Remove scripts, estilos CSS e elementos desnecessários</li>
+          <li>Extrai texto limpo preservando estrutura HTML básica</li>
+          <li>Traduz o conteúdo e exporta HTML traduzido</li>
+        </ul>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">webpage-translator.py</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content"># Instalar dependências no Colab (se precisar usar arquivos Word)
+            !pip install python-docx requests
+
+            import requests
+            from docx import Document
+            import os
+
+            # Configurações da API Microsoft Translator
+            subscription_key = "SUA_CHAVE_AQUI"
+            endpoint = "https://api.cognitive.microsofttranslator.com"
+            location = "eastus2"
+            target_language = "pt-br"
+
+            def translator_document(text: str, target_language: str = "pt-br") -> str:
+            """
+            Traduz um texto usando a API do Microsoft Translator.
+
+            Args:
+            text (str): Texto a ser traduzido.
+            target_language (str): Idioma de destino (ex: 'pt-br').
+
+            Returns:
+            str: Texto traduzido.
+            """
+            path = "/translate"
+            constructed_url = endpoint + path
+
+            params = {
+            "api-version": "3.0",
+            "from": "en",
+            "to": target_language
+            }
+
+            headers = {
+            "Ocp-Apim-Subscription-Key": subscription_key,
+            "Ocp-Apim-Subscription-Region": location,
+            "Content-type": "application/json",
+            "X-ClientTraceId": str(os.urandom(16))
+            }
+
+            body = [{"text": text}]
+
+            response = requests.post(
+            constructed_url,
+            params=params,
+            headers=headers,
+            json=body
+            )
+            response.raise_for_status()
+
+            result = response.json()
+            return result[0]["translations"][0]["text"]
+
+
+            # Exemplo de uso
+            texto_original = "Hello world, this is a test."
+            traduzido = translator_document(texto_original)
+            print("Original:", texto_original)
+            print("Traduzido:", traduzido)</div>
+        </div>
+
+        <h3>Exemplo de Entrada e Saída</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Exemplo de execução</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content">Entrada:
+            texto_original = "Hello world, this is a test."
+
+            Saída esperada:
+            Original: Hello world, this is a test.
+            Traduzido: Olá mundo, este é um teste.
+
+            Diferenças do Script A:
+            - Parâmetro 'to' como string em vez de lista
+            - Header X-ClientTraceId adicionado para rastreamento
+            - Melhor formatação do código</div>
+        </div>
+
+        <h3>Comando para Executar</h3>
+        <div class="command">python3 webpage-translator.py</div>
+      </section>
+
+      <!-- Exemplos de Saída -->
+      <section id="exemplos" class="section">
+        <h2>Exemplos de Saída</h2>
+        <p>Teste os scripts interativamente usando o sandbox abaixo:</p>
+
+        <div class="sandbox">
+          <h4>Demonstração do DOCX Translator</h4>
+          <button class="demo-btn" onclick="demoScriptA()">Executar Tradução de Documentos</button>
+          <div id="outputA" class="output">Clique no botão para ver a demonstração da Tradução de Documentos...</div>
+        </div>
+
+        <div class="sandbox">
+          <h4>Demonstração do Webpage Translator</h4>
+          <button class="demo-btn" onclick="demoScriptB()">Executar Tradução de Páginas</button>
+          <div id="outputB" class="output">Clique no botão para ver a demonstração da Tradução de Páginas...</div>
+        </div>
+      </section>
+
+      <!-- Como Rodar -->
+      <section id="como-rodar" class="section">
+        <h2>Como Rodar</h2>
+
+        <h3>Pré-requisitos</h3>
+        <ul class="step-list">
+          <li>Python 3.7 ou superior instalado</li>
+          <li>Bibliotecas: requests, python-docx, beautifulsoup4, lxml</li>
+          <li>Chave de API de tradução (PROVIDER_KEY)</li>
+          <li>Conexão com internet para acessar a API</li>
+        </ul>
+
+        <h3>Configuração do Ambiente</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Setup do ambiente</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content"># Criar ambiente virtual (recomendado)
+            python3 -m venv venv
+
+            # Ativar ambiente virtual
+            # No Windows:
+            venv\Scripts\activate
+            # No macOS/Linux:
+            source venv/bin/activate
+
+            # Instalar dependências
+            pip install requests python-docx beautifulsoup4 lxml
+
+            # Verificar instalação
+            python3 --version
+            pip list</div>
+        </div>
+
+        <h3>Execução dos Scripts</h3>
+        <div class="command"># DOCX Translator
+          python3 docx-translator.py
+
+          # Webpage Translator
+          python3 webpage-translator.py</div>
+
+        <h3>Estrutura de Arquivos</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Estrutura do projeto</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content">projeto/
+            ├── docx-translator.py # Tradução de Documentos DOCX
+            ├── webpage-translator.py # Tradução de Páginas Web
+            ├── index.html # Esta documentação
+            ├── projetos.md # Documentação dos projetos
+            ├── venv/ # Ambiente virtual
+            ├── .env # Variáveis de ambiente (opcional)
+            └── README.md # Documentação</div>
+        </div>
+      </section>
+
+      <!-- API/Params -->
+      <section id="api-params" class="section">
+        <h2>API/Parâmetros</h2>
+
+        <h3>DOCX Translator - Configuração</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Parâmetros</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content">def translator_document(text: str, target_language: str = "pt-br") -> str:
+            """
+            Traduz um texto usando a API do Microsoft Translator.
+
+            Args:
+            text (str): Texto a ser traduzido
+            target_language (str): Idioma de destino (padrão: 'pt-br')
+
+            Returns:
+            str: Texto traduzido
+
+            Configurações necessárias:
+            - subscription_key: Chave da API Microsoft Translator
+            - endpoint: URL da API (https://api.cognitive.microsofttranslator.com)
+            - location: Região da API (ex: 'eastus2')
+            """</div>
+        </div>
+
+        <h3>Webpage Translator - Configuração</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-title">Parâmetros</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <div class="code-content">def translator_document(text: str, target_language: str = "pt-br") -> str:
+            """
+            Traduz um texto usando a API do Microsoft Translator (versão avançada).
+
+            Args:
+            text (str): Texto a ser traduzido
+            target_language (str): Idioma de destino (padrão: 'pt-br')
+
+            Returns:
+            str: Texto traduzido
+
+            Melhorias em relação ao Script A:
+            - Parâmetro 'to' como string em vez de lista
+            - Header X-ClientTraceId para rastreamento
+            - Melhor formatação do código
+            """</div>
+        </div>
+
+        <h3>Tratamento de Erros</h3>
+        <ul class="step-list">
+          <li>Validação de chave de API e configurações</li>
+          <li>Verificação de conectividade com a API</li>
+          <li>Tratamento de erros de resposta HTTP</li>
+          <li>Validação de formato de entrada do texto</li>
+          <li>Tratamento de exceções com mensagens claras</li>
+        </ul>
+      </section>
+
+      <!-- Licença -->
+      <section id="licenca" class="section">
+        <h2>Licença</h2>
+        <p>Este projeto está licenciado sob a <strong>MIT License</strong>.</p>
+        <p>Você é livre para usar, modificar e distribuir este código conforme necessário para fins educacionais e comerciais.</p>
+      </section>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p><strong>Documentação de Scripts Python</strong> - Versão 1.0</p>
+    <p>© 2024 Esly Barbosa - Microsoft Certification Challenge #4 - AI 102</p>
+    <p>Licença MIT - Código aberto para fins educacionais</p>
+  </footer>
+
+  <!-- Botão Flutuante GitHub -->
+  <a href="https://github.com/seu-usuario/microsoft-translator-api" target="_blank" class="github-btn">
+    <span class="github-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+      </svg>
+    </span>
+    GitHub
+  </a>
+
+  <script>
+    // Sidebar toggle functionality
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarShowBtn = document.getElementById('sidebarShowBtn');
+    const sidebar = document.querySelector('.sidebar');
+    const container = document.querySelector('.container');
+    let sidebarHidden = false;
+
+    sidebarToggle.addEventListener('click', () => {
+      sidebarHidden = true;
+      sidebar.classList.add('hidden');
+      container.classList.add('sidebar-hidden');
+      sidebarShowBtn.classList.add('visible');
+    });
+
+    sidebarShowBtn.addEventListener('click', () => {
+      sidebarHidden = false;
+      sidebar.classList.remove('hidden');
+      container.classList.remove('sidebar-hidden');
+      sidebarShowBtn.classList.remove('visible');
+    });
+
+    // GitHub button visibility control
+    const githubBtn = document.querySelector('.github-btn');
+    const footer = document.querySelector('.footer');
+
+    function checkGitHubButtonVisibility() {
+      const footerRect = footer.getBoundingClientRect();
+      const githubBtnRect = githubBtn.getBoundingClientRect();
+
+      // Se o footer está visível na tela, esconder o botão GitHub
+      if (footerRect.top < window.innerHeight) {
+        githubBtn.classList.add('hidden');
+      } else {
+        githubBtn.classList.remove('hidden');
+      }
+    }
+
+    // Mobile menu functionality
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.add('open');
+    });
+
+    mobileMenuClose.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+    });
+
+    // Close mobile menu when clicking outside
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
+        mobileMenu.classList.remove('open');
+      }
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href');
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+
+        // Close mobile menu after navigation
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // Active navigation highlighting
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    function updateActiveNav() {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveNav);
+    updateActiveNav(); // Initial call
+
+    // Copy code functionality
+    function copyCode(button) {
+      const codeBlock = button.parentElement.nextElementSibling;
+      const code = codeBlock.textContent;
+
+      navigator.clipboard.writeText(code).then(() => {
+        button.textContent = 'Copiado!';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+          button.textContent = 'Copiar';
+          button.classList.remove('copied');
+        }, 2000);
+      }).catch(err => {
+        console.error('Erro ao copiar código:', err);
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = code;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        button.textContent = 'Copiado!';
+        button.classList.add('copied');
+
+        setTimeout(() => {
+          button.textContent = 'Copiar';
+          button.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Demo functions for sandbox
+    function demoScriptA() {
+      const output = document.getElementById('outputA');
+      const demoData = `DOCX TRANSLATOR - Preservando Formatação
+==================================================
+Arquivo de entrada: documento.docx
+
+Configurações:
+   - API: Configurável via PROVIDER_KEY
+   - Idioma origem: en (inglês)
+   - Idioma destino: pt-br (português brasileiro)
+   - Preservação: Títulos, parágrafos, listas, ênfases
+
+Resultado:
+   Arquivo original: documento.docx
+   Arquivo traduzido: documento_pt.docx
+   Formatação preservada: Sim
+   Estrutura mantida: Títulos, parágrafos, negrito, itálico
+
+Tradução de documento concluída com sucesso!
+==================================================`;
+
+      output.textContent = demoData;
+    }
+
+    function demoScriptB() {
+      const output = document.getElementById('outputB');
+      const demoData = `WEBPAGE TRANSLATOR - Limpando e Traduzindo HTML
+==================================================
+URL de entrada: "https://example.com/page"
+
+Configurações:
+   - API: Configurável via PROVIDER_KEY
+   - Idioma origem: en (inglês)
+   - Idioma destino: pt-br (português brasileiro)
+   - Limpeza: Remove scripts, CSS, elementos desnecessários
+   - Preservação: Estrutura HTML básica
+
+Processo:
+   1. Download da página web
+   2. Remoção de scripts e estilos
+   3. Extração de texto limpo
+   4. Tradução do conteúdo
+   5. Exportação de HTML traduzido
+
+Resultado:
+   URL Original: https://example.com/page
+   HTML traduzido: &lt;html&gt;&lt;body&gt;&lt;h1&gt;Título Traduzido&lt;/h1&gt;&lt;p&gt;Conteúdo traduzido...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;
+   Arquivo salvo: example_com_page_pt.html
+
+Tradução de página web concluída com sucesso!
+==================================================`;
+
+      output.textContent = demoData;
+    }
+
+    // Initialize demo outputs and event listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('outputA').textContent = 'Clique no botão para ver a demonstração do DOCX Translator...';
+      document.getElementById('outputB').textContent = 'Clique no botão para ver a demonstração do Webpage Translator...';
+
+      // Initialize GitHub button visibility check
+      checkGitHubButtonVisibility();
+    });
+
+    // Add scroll listener for GitHub button visibility
+    window.addEventListener('scroll', checkGitHubButtonVisibility);
+    window.addEventListener('resize', checkGitHubButtonVisibility);
+  </script>
+</body>
+
+</html>
